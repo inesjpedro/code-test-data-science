@@ -16,7 +16,7 @@ model on the test set.
 This section describes our data exploration process and findings,
 obtained with the `exploratory_analysis.py` script.
 
-The first step was to look at the customers dataset and try to 
+The first step was to look at the customers' dataset and try to 
 understand it. The features that describe each customer are:
 
 *   **fraudulent**: label indicating whether or not the customer is fraudulent;
@@ -106,9 +106,9 @@ addressed the questions:
 
 * Are there duplicated phone numbers? No.
 * Is it always true that `transactionAmount` == `orderAmount`? Yes.
-* Is there a strong relation between the type of payment method
+* Is there a strong relationship between the type of payment method
 used and the type of customer (fraudulent or not)? By looking
-at the histogram below, we established that the relation was not
+at the histogram below, we established that the relationship was not
 strong enough to build a new feature. Instead, we used the number
 of different payment method types used by each customer.
 
@@ -116,7 +116,7 @@ of different payment method types used by each customer.
 
 * Is there anything in particular in the customer device or IP address
 that distinguishes his behavior? By taking a quick scan at these features, 
-we did not encounter a particular feature allow us to clearly separate
+we did not encounter a particular feature that allowed us to clearly separate
 a fraudulent from a non-fraudulent user.  
 
 In case we have obtained different answers, new features might 
@@ -124,20 +124,20 @@ have been created.
 
 ### Correlation Matrix
 
-To have an idea whether these engineered features are going to be useful 
-in modeling the customer behavior (fraudulent or not), we compute the 
-correlation of each feature with the output variable. 
+To have an idea of whether these engineered features are going to be useful 
+in modeling customer behavior (fraudulent or not), we computed the correlation 
+of each feature with the output variable.
 
 ![alt text](plots/correlation_fraudulent.png) 
 
 Looking at the correlation matrix, we can infer that:
 
 *   the strongest correlation (in magnitude) of the output variable is with the `min_nr_chars_payment_method_issuer`, 
-with value of -0.39. So, as the **number of characters in the payment method issuer** decreases, the more likely it 
+with a value of -0.39. So, as the **number of characters in the payment method issuer** decreases, the more likely it 
 is for the customer to be fraudulent.
 
 *    the number of **payments that don't have an order nor transaction associated** (`nr_payments_without_correspondence`) 
-also positively correlate with the output variable.
+also positively correlates with the output variable.
 
 *    users with **duplicated email**, i.e. the user email is being used by other users, have also a strong correlation 
 with being fraudulent.
@@ -155,13 +155,13 @@ separated by class, as depicted below.
 
 ## Classification Model
 
-In this section we will describe the model used for customer
+In this section, we will describe the model used for customer
 classification, as well as the results obtained. For that, we
 used the `fraud_detection.py` script.
 
 Now that we have cleaned our dataset and constructed features that
 attempt to summarize each user, we start by splitting the data into
-train and test using a 80/20 split, maintaining the proportion of fraudulent to non-fraudulent
+train and test using an 80/20 split, maintaining the proportion of fraudulent to non-fraudulent
 customers in each split equal to the original dataset. Below you can find the 
 histogram of customers per class, per data split.
 
@@ -169,7 +169,7 @@ histogram of customers per class, per data split.
 
 For modeling the customer profile, we used a Random Forest classifier. 
 
-Since we have such a small dataset, we trained 10 random forest, each 
+Since we have such a small dataset, we trained 10 random forests, each 
 on a different random split of the dataset. We computed the performance on
 the training and testing datasets, and averaged the results, as shown below.
 
@@ -199,7 +199,7 @@ for ground-truth label.
 | GT | Non-fraud |     76    |   0   |
 |    |   Fraud   |     1     |   47  |
 
-Lastly, we have provide the confusion matrix regarding the test
+Lastly, we provide the confusion matrix regarding the test
 set, depicted below.
 
 |    |           | Predicted |       |
@@ -208,7 +208,7 @@ set, depicted below.
 | GT | Non-fraud |     19    |   1   |
 |    |   Fraud   |     0     |   12  |
 
-For this best model, the results seems very good and consistent across 
+For this best model, the results seem very good and consistent across 
 the train and test splits. The latter indicates the model did not overfit 
 to the training set.
 
@@ -216,7 +216,7 @@ to the training set.
 ### Feature Importance
 
 As features that occur closer to the root of decision trees are
-usually more relevants to predict the label of the observations, 
+usually more relevant to predict the label of the observations, 
 we will use our random forest model to determine which features 
 are more important in determining whether or not a customer is 
 fraudulent.
@@ -240,7 +240,7 @@ are typically located closer to the root of decision trees.
 
 ## Possible Improvements
 
-In this section we refer some possible improvements to this task
+In this section, we refer possible improvements to this task
 if we were given more time to work on it. As we have a small
 dataset, our suggestions are all related to feature engineering
  (and not regarding the model), namely
@@ -248,7 +248,7 @@ dataset, our suggestions are all related to feature engineering
 * Explore more the customer IP address feature - is there a type of
 pattern in the IP address that can help us identify fraudulent users?
 
-* Explore the relation between the customer's billing address and order's shipping address. 
+* Explore the relationship between the customer's billing address and order's shipping address. 
 How many different shipping addresses does a customer have?
 
 * Include the `paymentMethodProvider` as a categorical variable (or use one-hot encoding). Count number
