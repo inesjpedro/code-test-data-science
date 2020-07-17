@@ -316,7 +316,7 @@ def plot_feature_importance(features, importance):
 
     plt.barh(features, importance)
     plt.tight_layout()
-    plt.savefig('plots/feature_importance.png')
+    plt.show()
 
 
 if __name__ == '__main__':

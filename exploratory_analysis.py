@@ -81,7 +81,7 @@ def correlation_matrix(df, col):
     col_corr.drop(col, inplace=True)
     col_corr.plot.barh()
     plt.tight_layout()
-    plt.savefig('plots/correlation_{}.png'.format(col))
+    plt.show()
 
     # Plot the heatmap
     fig, ax = plt.subplots(figsize=(5, 5))
@@ -101,7 +101,6 @@ def plot_hist_per_class(customers_df, feature, title):
     plt.legend(['Fraud', 'Non-fraud'])
     plt.title('{} by type of user'.format(title))
     plt.show()
-#    plt.savefig('plots/hist_{}.png'.format(feature))
 
 
 def are_amounts_equal(df):
