@@ -5,13 +5,15 @@
 
 import argparse
 import json
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_auc_score
 
 
-def perform_fraud_detection(file_name, test_pc):
+def perform_fraud_detection(file_name, test_pc, plot_distr):
     """Takes the customers dataset and performs fraud detection"""
 
     # Load all data into flatten dataframe
@@ -26,10 +28,13 @@ def perform_fraud_detection(file_name, test_pc):
 
     # Split data into train and test
     train_df, test_df = split_dataset(customers_df, test_pc)
-
     # Convert bool output to int
     train_df.loc[:, 'fraudulent'] = train_df['fraudulent'].astype(int)
     test_df.loc[:, 'fraudulent'] = test_df['fraudulent'].astype(int)
+
+    if plot_distr:
+        plot_data_distr_per_split(train_df['fraudulent'].tolist(), test_df['fraudulent'].tolist())
+
     # Separate predictive from output variables
     y_train = train_df.pop('fraudulent')
     y_test = test_df.pop('fraudulent')
@@ -43,6 +48,11 @@ def perform_fraud_detection(file_name, test_pc):
     evaluate_model(rf, train_df, y_train)
     print("\n\nEvaluating model on test set")
     evaluate_model(rf, x_test, y_test)
+
+    # Feature importance
+    importance = rf.feature_importances_
+    pred_cols = [col for col in customers_df.columns if col != 'fraudulent']
+    plot_feature_importance(pred_cols, importance)
 
 
 def multiple_json_objects_to_df(json_file):
@@ -271,12 +281,53 @@ def evaluate_model(model, x, y_gt):
     print(roc_auc_score(y_gt, model.predict_proba(x)[:, 1]))
 
 
+def plot_data_distr_per_split(train_labels, test_labels):
+    """Plots data distribution per class and per split"""
+
+    # Plot label distribution in all splits
+    nr_train_pos = len([x for x in train_labels if x == 1])
+    nr_train_neg = len([x for x in train_labels if x == 0])
+    nr_test_pos = len([x for x in test_labels if x == 1])
+    nr_test_neg = len([x for x in test_labels if x == 0])
+
+    positive_class = 'fraud'
+    negative_class = 'non-fraud'
+    freq_df = pd.DataFrame([[positive_class, 'train', nr_train_pos], [negative_class, 'train', nr_train_neg],
+                            [positive_class, 'test', nr_test_pos], [negative_class, 'test', nr_test_neg]],
+                           columns=['class', 'split', 'frequency'])
+
+    freq_df.pivot("split", "class", "frequency").plot(kind='bar', color=['red', 'green'])
+    plt.title("Class distribution per data split")
+    plt.ylabel("frequency")
+    plt.show()
+
+    print("Percentage of customers in the training dataset that are fradudulent: {:.2f}%".format(
+        nr_train_pos / len(train_labels) * 100))
+    print("Percentage of customers in the training dataset that are not-fraudulent: {:.2f}%".format(
+        nr_train_neg / len(train_labels) * 100))
+    print("Percentage of customers in the test dataset that are fraudulent: {:.2f}%".format(
+        nr_test_pos / len(test_labels) * 100))
+    print("Percentage of customers in the test dataset that are non-fraudulent: {:.2f}%".format(
+        nr_test_neg / len(test_labels) * 100))
+
+
+def plot_feature_importance(features, importance):
+    """Plots feature importance"""
+
+    plt.barh(features, importance)
+    plt.tight_layout()
+    plt.savefig('plots/feature_importance.png')
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--data_file", type=str, default='customers.json', help='Path to the customers dataset.')
     parser.add_argument(
         "--test_pc", type=float, default=0.2, help='Percentage of the dataset used for test.')
+    parser.add_argument('--plot_distr', dest='plot_distr', action='store_true')
+    parser.add_argument('--no-plot_distr', dest='plot_distr', action='store_false')
+    parser.set_defaults(plot_distr=False)
     args = parser.parse_args()
 
-    perform_fraud_detection(args.data_file, args.test_pc)
+    perform_fraud_detection(args.data_file, args.test_pc, args.plot_distr)
