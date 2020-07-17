@@ -65,6 +65,7 @@ def plot_label_distr(customers_df):
     print("Number of non-fraudulent customers: {} ({:.2f}%)".format(
         nr_non_fraud, nr_non_fraud / customers_df.shape[0] * 100))
 
+    plt.clf()
     barlist = plt.bar(['fraud', 'non-fraud'], [nr_fraud, nr_non_fraud])
     barlist[0].set_color('r')
     barlist[1].set_color('g')
@@ -78,6 +79,7 @@ def correlation_matrix(df, col):
     corr = df.corr()
     col_corr = corr[col]
     print(col_corr)
+    plt.clf()
     col_corr.drop(col, inplace=True)
     col_corr.plot.barh()
     plt.tight_layout()
@@ -95,6 +97,7 @@ def correlation_matrix(df, col):
 def plot_hist_per_class(customers_df, feature, title):
     """Plots the histogram of a given feature, separated by class"""
 
+    plt.clf()
     plt.hist([customers_df.loc[customers_df['fraudulent'], feature],
               customers_df.loc[~customers_df['fraudulent'], feature]],
              color=['r', 'g'])

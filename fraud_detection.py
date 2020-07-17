@@ -6,7 +6,6 @@
 import argparse
 import json
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
@@ -296,6 +295,7 @@ def plot_data_distr_per_split(train_labels, test_labels):
                             [positive_class, 'test', nr_test_pos], [negative_class, 'test', nr_test_neg]],
                            columns=['class', 'split', 'frequency'])
 
+    plt.clf()
     freq_df.pivot("split", "class", "frequency").plot(kind='bar', color=['red', 'green'])
     plt.title("Class distribution per data split")
     plt.ylabel("frequency")
@@ -314,6 +314,7 @@ def plot_data_distr_per_split(train_labels, test_labels):
 def plot_feature_importance(features, importance):
     """Plots feature importance"""
 
+    plt.clf()
     plt.barh(features, importance)
     plt.tight_layout()
     plt.show()
